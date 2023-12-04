@@ -5,9 +5,9 @@
 2. There you can find the raw dialogs with the ground truth caption and question programs (```data/dialogs.json```) and the derendered scenes on top of which the programs will be executed (```data/CLEVR_scenes.json```).
 
 ## Code
-Please run the code using ```main.py``` script. It will automatically set up the paths to the data and instantiate an object of the executor.
+............
 
-## Task 
+## Task
 Some functions of the executor are missing. The main goal of this task is to re-implement these based on the NSVD [paper][1] and the remaining methods of the executor. Please take a look at ```executor/symbolic_executor.py``` and complete the missing modules. These are marked with "TODO".
 
 ## Goal
