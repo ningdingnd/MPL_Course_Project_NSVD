@@ -302,9 +302,14 @@ class SymbolicExecutorClevr(object):
 
     # TODO: Re-implement this function 
     def countAttributeCaption(self, attribute):
-        #filtered_objects = self.filterAttribute(self.scene, attribute)
-        filtered = self.countAttribute(attribute)
-        return (filtered)
+        filtered_grps = self.filterAttribute(self.scene, attribute)
+        #filtered = self.countAttribute(attribute)
+        self.currentGrp = filtered_grps
+        for _obj in filtered_grps:
+            self.updateCurrentObj(_obj)
+            self.updateVisited(_obj)
+        return len(filtered_grps)
+
     
     def getAnchorAttribute(self, attribute_1, attribute_2, scene):
         # The anchor object is unique. If we filter the object list
@@ -653,8 +658,8 @@ class SymbolicExecutorClevr(object):
 
     # TODO: Re-implement this function 
     def existAttribute(self, attribute):
-        return any(obj.get(attribute) is not None for obj in self.scene)
-
+        numAttribute = self.countAttribute(attribute,updateCurrentObj=False)
+        return "yes" if numAttribute > 0 else "no"
     def existAttributeGroup(self, attribute):
         numAttributeGrp = self.countAttributeGroup(
             attribute, updateCurrentObj=False)

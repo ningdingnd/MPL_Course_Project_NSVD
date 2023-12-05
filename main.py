@@ -5,8 +5,8 @@ from executor.symbolic_executor import SymbolicExecutorClevr
 
 from tqdm import tqdm
 
-path_scenes_raw = "/Users/qiansuyu/Desktop/NSVD_reimplementation/NSVD/data/CLEVR_scenes.json"
-path_dataset = "/Users/qiansuyu/Desktop/NSVD_reimplementation/NSVD/data/dialogs.json"
+path_scenes_raw = os.path.join(os.getcwd(), "data/CLEVR_scenes.json")
+path_dataset = os.path.join(os.getcwd(),"data/dialogs.json")
 with open(path_dataset, "r") as file:
     dataset = json.load(file)
 
@@ -25,7 +25,7 @@ def test():
             symblicExecutor.reset(imgIdx)
             # execute the prog. from the caption
             captionFuncLabel = dialog["template"]
-            print("The caption function is ",captionFuncLabel)
+          #  print("The caption function is ",captionFuncLabel)
             captionFuncArgs = list(
                 map(lambda a: "_".join(a.split(" ")), dialog["args"]))
             
@@ -33,8 +33,8 @@ def test():
 
             # Answer the questions
             for i, d in enumerate(dialog["dialog"]):
-                print("The question is ",i+1,"Question and the content is ",d["question"])
-                print("The type is ",d["template"])
+               # print("The question is ",i+1,"Question and the content is ",d["question"])
+               # print("The type is ",d["template"])
                 # if i+1 == 10:
                 #     print("bla")
                 numAll += 1
@@ -47,8 +47,8 @@ def test():
                 predAnswer = str(predAnswer)
                 if predAnswer != gtAnswer:
          
-                    print("Predict answer",predAnswer)
-                    print("GT answer is ",gtAnswer)
+                   # print("Predict answer",predAnswer)
+                   # print("GT answer is ",gtAnswer)
                     numFalse += 1
              
     print("acc = {}".format(1 - numFalse/numAll))
