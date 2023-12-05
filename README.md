@@ -13,6 +13,9 @@ Some functions of the executor are missing. The main goal of this task is to re-
 ## Goal
 Once you are happy with the code, run the evaluation script, i.e. ```main.py```, to test you implemented logic. You should get an accuracy close to that in Table 6 of the [paper][1], i.e. 99.99%
 
+## Problem 
+In seekAttributeRelEarly() ```earlyObj = deepcopy(filtered_earlyObjs[-2]) ``` if there are more than one obj in the earlyObj and also fulfill the attribute filter and the curren obj = early obj we dont know which one should choose it to be the early Obj is the last one or the last two. We set it to ``` [-2]``` since it has higher accuracy. 
+
 HAPPY CODING!
 
 [1]: https://perceptualui.org/publications/abdessaied22_coling.pdf
