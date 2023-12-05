@@ -1,12 +1,12 @@
 import os
-import json
+import os,json
 from utils import load_clevr_scenes
 from executor.symbolic_executor import SymbolicExecutorClevr
-
 from tqdm import tqdm
 
-path_scenes_raw = "/Users/qiansuyu/Desktop/NSVD_reimplementation/NSVD/data/CLEVR_scenes.json"
-path_dataset = "/Users/qiansuyu/Desktop/NSVD_reimplementation/NSVD/data/dialogs.json"
+
+path_scenes_raw = os.path.join(os.getcwd(), "data/CLEVR_scenes.json")
+path_dataset = os.path.join(os.getcwd(),"data/dialogs.json")
 with open(path_dataset, "r") as file:
     dataset = json.load(file)
 
@@ -34,6 +34,8 @@ def test():
             # Answer the questions
             for i, d in enumerate(dialog["dialog"]):
                 print("The question is ",i+1,"Question and the content is ",d["question"])
+                print("The caption function is ",captionFuncLabel)
+
                 print("The type is ",d["template"])
                 # if i+1 == 10:
                 #     print("bla")
@@ -46,11 +48,12 @@ def test():
                     questionFuncLabel, questionFuncArgs)
                 predAnswer = str(predAnswer)
                 if predAnswer != gtAnswer:
-         
+                    print("************************")
                     print("Predict answer",predAnswer)
                     print("GT answer is ",gtAnswer)
                     numFalse += 1
-             
+                    print("************************")
+
     print("acc = {}".format(1 - numFalse/numAll))
 
 if __name__ == "__main__":
