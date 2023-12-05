@@ -24,6 +24,8 @@ def test():
         dIdx = 0
         # print("img index:", imgIdx)
         for dialog in dialogs:
+            dIdx = dIdx + 1
+            # print("dialog index: ", dIdx)
             symblicExecutor.reset(imgIdx)
             # execute the prog. from the caption
             captionFuncLabel = dialog["template"]
