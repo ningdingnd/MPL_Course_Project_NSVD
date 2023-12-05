@@ -21,20 +21,22 @@ def test():
     for img in pbar:
         imgIdx = img["image_index"]
         dialogs = img["dialogs"]
+        dIdx = 0
+        # print("img index:", imgIdx)
         for dialog in dialogs:
             symblicExecutor.reset(imgIdx)
             # execute the prog. from the caption
             captionFuncLabel = dialog["template"]
-          #  print("The caption function is ",captionFuncLabel)
             captionFuncArgs = list(
                 map(lambda a: "_".join(a.split(" ")), dialog["args"]))
             
             symblicExecutor.execute(captionFuncLabel, captionFuncArgs)
-
+            # print('CAP', dialog['caption'], dialog['template'], captionFuncArgs)         
             # Answer the questions
             for i, d in enumerate(dialog["dialog"]):
-               # print("The question is ",i+1,"Question and the content is ",d["question"])
-               # print("The type is ",d["template"])
+                gtAnswer = "_".join(str(d["answer"]).split(" "))
+                # print("QUES",i,d["question"],d["template"], d['args'], gtAnswer)
+                
                 # if i+1 == 10:
                 #     print("bla")
                 numAll += 1
@@ -47,8 +49,7 @@ def test():
                 predAnswer = str(predAnswer)
                 if predAnswer != gtAnswer:
          
-                   # print("Predict answer",predAnswer)
-                   # print("GT answer is ",gtAnswer)
+                   # print("PRED answer",predAnswer)
                     numFalse += 1
              
     print("acc = {}".format(1 - numFalse/numAll))
