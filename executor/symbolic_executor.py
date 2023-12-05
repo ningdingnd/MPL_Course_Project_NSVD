@@ -771,7 +771,7 @@ class SymbolicExecutorClevr(object):
         if(len(filtered_earlyObjs)>1):
             if (self.currentObj != None):
                 if (earlyObj['id'] == self.currentObj['id']):
-                    earlyObj = deepcopy(self.currentObj)
+                    earlyObj = deepcopy(filtered_earlyObjs[-2])
         
 
         filtered = self.filterPosition(self.scene, earlyObj, pos)
@@ -797,6 +797,7 @@ class SymbolicExecutorClevr(object):
                     obj["identifier"] = _obj["identifier"]
                     break
             self.updateIdentifier(obj, obj[attributeType])
+
             self.updateCurrentObj(obj)
             self.updateVisited(obj)
             return obj[attributeType]
