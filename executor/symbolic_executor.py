@@ -502,10 +502,33 @@ class SymbolicExecutorClevr(object):
         return len(matching)   
     # TODO: Re-implement this function 
     def countAttributeGroup(self, attribute, updateCurrentObj=True):
-        matching = [obj for obj in self.currentGrp if obj.get(attribute) is not None]
-        if len(matching) > 0 and updateCurrentObj:
-            self.updateCurrentObj(matching[0])
-        return len(matching)
+        currentGrpCopy = deepcopy(self.currentGrp)
+        filtered = self.filterAttribute(currentGrpCopy, attribute)
+
+        if len(filtered) == 0:
+            return 0
+
+        self.currentGrp = filtered
+        self.groups.append(filtered)
+
+        if len(filtered) == 1:
+            obj = filtered[0]
+            new = True
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj = _obj
+                    new = False
+                    break
+            if updateCurrentObj:
+                self.updateCurrentObj(deepcopy(obj))
+                self.uniqueObjFlag = True
+                # print("countAttributeGroup", obj["shape"])
+                # print("current obj", self.currentObj["shape"])
+            else:
+                if new:
+                    self.objs.append(obj)
+            
+        return len(filtered)
     
     def countObjRelImm(self, pos, updateCurrentObj=True):
         filtered = self.filterPosition(self.scene, self.currentObj, pos)
