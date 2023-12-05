@@ -570,11 +570,15 @@ class SymbolicExecutorClevr(object):
     # TODO: Re-implement this function 
     def countObjRelEarly(self, pos, earlyObjAttribute, updateCurrentObj=True):
         objs_copy = deepcopy(self.objs)
-        filtered = self.filterAttribute(objs_copy, earlyObjAttribute)
-        if len(filtered) == 0:
+        filtered_earlyObjs = self.filterAttribute(objs_copy, earlyObjAttribute)
+        if len(filtered_earlyObjs) == 0:
             return 0
-        objEarly = deepcopy(filtered[-1])
-        
+        objEarly = deepcopy(filtered_earlyObjs[-1])
+
+        if(len(filtered_earlyObjs)>1):
+            if (self.currentObj != None):
+                if (objEarly['id'] == self.currentObj['id']):
+                    objEarly = deepcopy(filtered_earlyObjs[-2])
         self.updateCurrentObj(objEarly)
         # lenn = self.countObjRelImm(pos, False)
 
@@ -768,11 +772,16 @@ class SymbolicExecutorClevr(object):
         
         earlyObj = filtered_earlyObjs[-1]
 
+        # NOTE: difference between 88.3% and 88.8%, problem in 2-8
         if(len(filtered_earlyObjs)>1):
             if (self.currentObj != None):
                 if (earlyObj['id'] == self.currentObj['id']):
                     earlyObj = deepcopy(filtered_earlyObjs[-2])
         
+        '''print("Early Obj:", earlyObj['size'], 
+              earlyObj['material'],
+              earlyObj['color'], 
+              earlyObj['shape'])'''
 
         filtered = self.filterPosition(self.scene, earlyObj, pos)
         if len(filtered) == 0:
@@ -799,5 +808,18 @@ class SymbolicExecutorClevr(object):
             self.updateIdentifier(obj, obj[attributeType])
 
             self.updateCurrentObj(obj)
+            '''print("Current Obj:", self.currentObj['size'], 
+              self.currentObj['material'],
+              self.currentObj['color'], 
+              self.currentObj['shape'])
+            print("<---Objs list:")
+            for _obj in self.objs:
+                print(_obj['size'], 
+              _obj['material'],
+              _obj['color'], 
+              _obj['shape'])
+            print(">---End Objs list---<")'''
+            
+
             self.updateVisited(obj)
             return obj[attributeType]
