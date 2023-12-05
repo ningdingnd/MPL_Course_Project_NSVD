@@ -147,13 +147,13 @@ class SymbolicExecutorClevr(object):
                 del self.objs[i]
         # Current obj is always kept at the end of the visited objs
         self.objs.append(obj)
-        print(">---Current Objs contains:")
+        '''print(">---Current Objs contains:")
         for i,_obj in enumerate(objsCopy):
             print(_obj["size"], 
                   _obj["color"],
                   _obj["material"], 
                   _obj["shape"])
-        print("<---")
+        print("<---")'''
 
     def updateVisited(self, obj):
         if len(self.visited) == 0:
@@ -489,10 +489,10 @@ class SymbolicExecutorClevr(object):
 
 
         if len(matching) > 0 and updateCurrentObj:
-            print(f"Updating current object to: {matching[0]}")
+            #print(f"Updating current object to: {matching[0]}")
             self.updateCurrentObj(matching[0])
-        else:
-            print(f"No matching objects found or updateCurrentObj is False.")
+        #else:
+            #print(f"No matching objects found or updateCurrentObj is False.")
 
         return len(matching)   
     # TODO: Re-implement this function 
@@ -504,7 +504,7 @@ class SymbolicExecutorClevr(object):
     
     def countObjRelImm(self, pos, updateCurrentObj=True):
         filtered = self.filterPosition(self.scene, self.currentObj, pos)
-        print("In count-Obj-Rel-Imm, filtered len = ", len(filtered))
+        # print("In count-Obj-Rel-Imm, filtered len = ", len(filtered))
         if len(filtered) == 0:
             return 0
         # Update the visited objects list
@@ -603,7 +603,7 @@ class SymbolicExecutorClevr(object):
     def countObjExcludeEarly(self, attributeType, earlyObjAttribute, updateCurrentObj=True):
         objs_copy = deepcopy(self.objs)
         scene_copy =deepcopy(self.scene)
-        print("In Count-Obj_Exclude_Early")
+        # print("In Count-Obj_Exclude_Early")
         '''print(">--1-NOT in update Current Objs contains:")
         for i,_obj in enumerate(self.objs):
             print(_obj["size"], 
@@ -612,17 +612,18 @@ class SymbolicExecutorClevr(object):
                   _obj["shape"])
         print("<---")'''
         
-        print("len(objs)=", len(self.objs))
+        # print("len(objs)=", len(self.objs))
         filtered = self.filterAttribute(objs_copy, earlyObjAttribute)
         if len(filtered) == 0:
             return 0
         
         objEarly = deepcopy(filtered[-1])
-        print("objEarly is:", 
+        '''print("objEarly is:", 
               objEarly["size"], 
                   objEarly["color"],
                   objEarly["material"],
-                  objEarly["shape"])
+                  objEarly["shape"])'''
+        
         self.updateCurrentObj(deepcopy(objEarly))
     
         filtered_exclude_early = self.excludeAttribute(scene_copy, deepcopy(objEarly), attributeType)
@@ -730,25 +731,44 @@ class SymbolicExecutorClevr(object):
 
     # TODO: Re-implement this function 
     def seekAttributeRelEarly(self, attributeType, pos, earlyObjAttribute):
-            # Validate if the earlyObjAttribute is a valid attribute
-        earlyAttributeType = self.getAttributeType(earlyObjAttribute)
-        assert earlyObjAttribute in self.attribute_all, "Early attribute <{}> is not valid".format(earlyObjAttribute)
-
-        # Find the first object in the scene that matches the earlyObjAttribute
-        earlyObj = next((obj for obj in self.scene if obj.get(earlyAttributeType) == earlyObjAttribute), None)
-        if not earlyObj:
+        # raise NotImplementedError
+        scene = deepcopy(self.objs)
+        filtered_earlyObjs = self.filterAttribute(scene, earlyObjAttribute)
+        
+        if len(filtered_earlyObjs) == 0:
             return "none"
+        
+        earlyObj = filtered_earlyObjs[-1]
 
-        # Filter objects based on their position relative to the early object
+        if(len(filtered_earlyObjs)>1):
+            if (self.currentObj != None):
+                if (earlyObj['id'] == self.currentObj['id']):
+                    earlyObj = deepcopy(self.currentObj)
+        
+
         filtered = self.filterPosition(self.scene, earlyObj, pos)
-        if not filtered:
-            return "none"
+        if len(filtered) == 0:
+            return "none"  
+        else:
+            # Get the closest object to slef.obj
+            if pos == "left":
+                filtered.sort(key=lambda x: x["position"][0])
+                obj = filtered[-1]
+            elif pos == "right":
+                filtered.sort(key=lambda x: x["position"][0])
+                obj = filtered[0]
+            elif pos == "front":
+                filtered.sort(key=lambda x: x["position"][1])
+                obj = filtered[0]
+            elif pos == "behind":
+                filtered.sort(key=lambda x: x["position"][1])
+                obj = filtered[-1]
 
-        # Find the first object in the filtered list that has the desired attributeType
-        for obj in filtered:
-            if attributeType in obj:
-                self.updateIdentifier(obj, obj[attributeType])
-                self.updateCurrentObj(obj)
-                return obj[attributeType]
-
-        return "none"
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj["identifier"] = _obj["identifier"]
+                    break
+            self.updateIdentifier(obj, obj[attributeType])
+            self.updateCurrentObj(obj)
+            self.updateVisited(obj)
+            return obj[attributeType]
