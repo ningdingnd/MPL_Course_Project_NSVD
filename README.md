@@ -17,7 +17,7 @@ Once you are happy with the code, run the evaluation script, i.e. ```main.py```,
 In seekAttributeRelEarly() ```earlyObj = deepcopy(filtered_earlyObjs[-2]) ``` if there are more than one obj in the earlyObj and also fulfill the attribute filter and the curren obj = early obj we dont know which one should choose it to be the early Obj is the last one or the last two. We set it to ``` [-2]``` since it has higher accuracy. 
 
 
-##3-6 should be -2 
+## 3-6 should be -2 
 dialog 3
 caption: 'There are 2 cylinders in the image.' 'count-att'
 0. 'Any green objects in the group?''yes''exist-attribute-group'['green']
@@ -28,7 +28,7 @@ caption: 'There are 2 cylinders in the image.' 'count-att'
 5.'If there is an object right of the above green object, what material is it?''rubber''seek-attr-rel-early'['material', 'right', 'green']
 6.'What is the count of objects the earlier large object has to its front?'2 count-obj-rel-early'['front', 'large']
 
-##2-8 should be -1
+## 2-8 should be -1
 QUES 0 If there is an object left of it, what is its shape? seek-attr-rel-imm ['shape', 'left'] none
 QUES 1 How many other objects share similar color with that brown object? count-obj-exclude-early ['color', 'brown'] 0
 QUES 2 If there is an object behind the earlier brown object, what is its material? seek-attr-rel-early ['material', 'behind', 'brown'] rubber
