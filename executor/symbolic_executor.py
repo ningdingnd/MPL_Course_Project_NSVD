@@ -600,7 +600,7 @@ class SymbolicExecutorClevr(object):
                   objEarly["material"], 
                   objEarly["shape"])'''
         
-        self.updateCurrentObj(objEarly)
+        # self.updateCurrentObj(objEarly)
 
         return len(filtered)
 
@@ -729,6 +729,11 @@ class SymbolicExecutorClevr(object):
         if len(filtered) == 0:
             return "none"
         obj = deepcopy(filtered[-1])
+        if(len(filtered)>1):
+            if (self.currentObj != None):
+                if (obj['id'] == self.currentObj['id']):
+                    obj = deepcopy(filtered[-2])
+
         self.updateCurrentObj(deepcopy(obj))
         self.updateIdentifier(self.currentObj, self.currentObj[attributeType])
         return obj[attributeType]
@@ -782,7 +787,7 @@ class SymbolicExecutorClevr(object):
               earlyObj['material'],
               earlyObj['color'], 
               earlyObj['shape'])'''
-
+        
         filtered = self.filterPosition(self.scene, earlyObj, pos)
         if len(filtered) == 0:
             return "none"  
