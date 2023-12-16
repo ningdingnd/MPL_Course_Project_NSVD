@@ -1,40 +1,58 @@
-# Instructions
+# NSVD
+This is the original implementation of the neuro-symbolic visual dialog paper, i.e. without the modifications proposed for this project.
 
 ## Data
-1. The data needed for this re-implementation task is located in the ```data/``` folder.
-2. There you can find the raw dialogs with the ground truth caption and question programs (```data/dialogs.json```) and the derendered scenes on top of which the programs will be executed (```data/CLEVR_scenes.json```).
+The data (rendered scenes and dialgs) is located in the ```data\``` folder.
 
 ## Code
-............
+1. Create a conda environment and install dependencies
 
-## Task
-Some functions of the executor are missing. The main goal of this task is to re-implement these based on the NSVD [paper][1] and the remaining methods of the executor. Please take a look at ```executor/symbolic_executor.py``` and complete the missing modules. These are marked with "TODO".
+```shell
+   conda create -n nsvd python=3.7
+   conda activate nsvd
+   conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
+   pip install tqdm h5py tensorboardX
+```
+2. Preprocess the data
+```shell
+   cd preprocess_dialogs
+   python preprocess # Set the flags as appropriate
+```
+3. Adjust the experiments hyperparameters as appropriate in ```prog_generator/options_caption_parser.py``` and ```prog_generator/option_question_parser.py```
 
-## Goal
-Once you are happy with the code, run the evaluation script, i.e. ```main.py```, to test you implemented logic. You should get an accuracy close to that in Table 6 of the [paper][1], i.e. 99.99%
+4. Train the caption parser
 
-## Problem 
-In seekAttributeRelEarly() ```earlyObj = deepcopy(filtered_earlyObjs[-2]) ``` if there are more than one obj in the earlyObj and also fulfill the attribute filter and the curren obj = early obj we dont know which one should choose it to be the early Obj is the last one or the last two. We set it to ``` [-2]``` since it has higher accuracy. 
+```shell
+   cd prog_generator
+   python train_caption_parser.py --mode train
+```
 
+5. Train the question parser
 
-## 3-6 should be -2 
-dialog 3
-caption: 'There are 2 cylinders in the image.' 'count-att'
-0. 'Any green objects in the group?''yes''exist-attribute-group'['green']
-1.'What is the count of other objects in the image?'3'count-other'
-2.'If there is an object to the left of the earlier green object, what is its material?''rubber''seek-attr-rel-early'
-3.'What is the size of this object?''large''seek-attr-imm'['size']
-4.'And color?''brown''seek-attr-imm2'['color']
-5.'If there is an object right of the above green object, what material is it?''rubber''seek-attr-rel-early'['material', 'right', 'green']
-6.'What is the count of objects the earlier large object has to its front?'2 count-obj-rel-early'['front', 'large']
+```shell
+   cd prog_generator
+   python train_question_parser.py --mode train
+```
 
-## 2-8 should be -1
-QUES 0 If there is an object left of it, what is its shape? seek-attr-rel-imm ['shape', 'left'] none
-QUES 1 How many other objects share similar color with that brown object? count-obj-exclude-early ['color', 'brown'] 0
-QUES 2 If there is an object behind the earlier brown object, what is its material? seek-attr-rel-early ['material', 'behind', 'brown'] rubber
-QUES 3 If there is an object in front of that brown object, what is its size? seek-attr-rel-early ['size', 'front', 'brown'] small
-QUES 4 If there is an object to the right of the previous matte object, what size is it? seek-attr-rel-early ['size', 'right', 'rubber'] large
-QUES 5 What about its material? seek-attr-imm ['material'] rubber
-QUES 6 Does it have objects to behind itself in the image? exist-obj-rel-imm ['behind'] yes
-QUES 7 How about to its right? exist-obj-rel-imm2 ['right'] yes
-QUES 8 If there is an object to the right of the previous big object, what size is it? seek-attr-rel-early ['size', 'right', 'large'] large
+6. Evaluate
+
+```shell
+   cd prog_generator
+   python train_question_parser.py --mode test_with_gt
+```
+
+## Instructions
+1. Read the Neuro-Sybolic Visual Dialog [paper][1]
+2. Orient yourself using this codebase and implement the suggested modifications (data preprocessing, dataloaders, model architecture)
+3. Train the new seq2seq program generator and evaluate its accuracy, i.e. how accurate the generate programs are
+4. Complete the missing modules of the Executor (Re-implementation task)
+5. Validate the logic of your exectutor by evaluting it on groud-truth data (scenes and programs) 
+6. Test the whole model and compare your results with paper. Here you will use the generated programs and the completed executor
+
+## Important
+This README was created to give you an overall picture of how the codease is structured and the main steps you need to follow in order to replicate the results of the paper.
+You might need to solve some coding issues on your own if the code does not work out of the bat. This part of the learning process and research in general.
+
+HAPPY CODING!
+
+[1]: https://aclanthology.org/2022.coling-1.17.pdf

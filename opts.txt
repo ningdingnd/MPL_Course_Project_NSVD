@@ -1,0 +1,37 @@
+| options
+FeedForwardSize: 2048
+FlatGlimpses: 1
+FlatMLPSize: 512
+FlatOutSize: 512
+batch_size: 64
+betas: [0.9, 0.98]
+bidirectional: 1
+dataPathTest: E:/MPL/archive/NSVD_project/NSVD_project/data/dialogs_test.json
+dataPathTr: E:/MPL/archive/NSVD_project/NSVD_project/data/dialogs_train.json
+dataPathVal: E:/MPL/archive/NSVD_project/NSVD_project/data/dialogs_val.json
+debug_every: 100
+display_every: 5
+dropout: 0.1
+embedDim: 300
+eps: 1e-09
+gpu_ids: []
+hiddenDim: 512
+hiddenSizeHead: 64
+layers: 6
+load_checkpoint_path: None
+lr: 0.001
+lr_decay_factor: 0.5
+lr_decay_marks: [50000, 55000]
+mode: train
+multiHead: 8
+numLayers: 2
+num_iters: 5000
+num_workers: 0
+optim: adam
+res_path: /result
+run_dir: .
+seed: 42
+shuffle_data: 1
+validate_every: 1000
+vocabPath: /vocab
+weight_decay: 1e-06
