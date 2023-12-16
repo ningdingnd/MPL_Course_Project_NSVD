@@ -15,44 +15,14 @@ def invertDict(_dict):
 class ClevrDialogDataset(Dataset):
     def __init__(self, dataPath, vocabPath, split, indStart=0, indEnd=-1):
         super(ClevrDialogDataset, self).__init__()
-        # self.data = h5py.File(dataPath, "r")
-        
-        ''''''
-        # Open the JSON file in read mode
-        with open(dataPath, "r") as json_file:
-        # Load the JSON data
-            self.data = json.load(json_file)
-            # print("TAG, selfdata", self.data)
-
-        
-        # Specify the path to the folder containing the JSON file
-        folder_path = vocabPath
-
-        # Check if the folder exists
-        if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            # Get the list of files in the folder
-            files_in_folder = os.listdir(folder_path)
-
-            # Check if the folder is not empty
-            if files_in_folder:
-                with open(vocabPath, "r") as f:
-                    self.vocab = json.load(f)
-
-                # Now, json_data contains the contents of the JSON file
-                print(f"JSON file '{folder_path}' loaded successfully.")
-                self.vocab["idx_text_to_token"] = invertDict(self.vocab["text_token_to_idx"])
-                self.vocab["idx_prog_to_token"] = invertDict(self.vocab["prog_token_to_idx"])
-                self.vocab["idx_prog_to_token"] = invertDict(self.vocab["prog_token_to_idx"])
-                self.lenVocabText = len(self.vocab["text_token_to_idx"])
-                self.lenVocabProg = len(self.vocab["prog_token_to_idx"])
-            else:
-                print(f"The folder '{folder_path}' is empty.")
-        else:
-            print(f"The folder '{folder_path}' does not exist or is not a directory.")
-
-
-        
-
+        self.data = h5py.File(dataPath, "r")
+        with open(vocabPath, "r") as f:
+            self.vocab = json.load(f)
+        self.vocab["idx_text_to_token"] = invertDict(self.vocab["text_token_to_idx"])
+        self.vocab["idx_prog_to_token"] = invertDict(self.vocab["prog_token_to_idx"])
+        self.vocab["idx_prog_to_token"] = invertDict(self.vocab["prog_token_to_idx"])
+        self.lenVocabText = len(self.vocab["text_token_to_idx"])
+        self.lenVocabProg = len(self.vocab["prog_token_to_idx"])
 
         self.split = split
         self.indStart = indStart
@@ -70,13 +40,6 @@ class ClevrDialogDataset(Dataset):
 class ClevrDialogCaptionDataset(ClevrDialogDataset):
     def __init__(self, dataPath, vocabPath, split, name, indStart=0, indEnd=-1):
         super(ClevrDialogCaptionDataset, self).__init__(dataPath, vocabPath, split, indStart=indStart, indEnd=indEnd)
-        indStart = int(indStart)
-        indEnd = int(indEnd)
-        print("TAG", type(indStart), type(indEnd))
-        print("TAG, ind start", indStart, "ind end", indEnd )
-        print('TAG, self.data[caption]', self.data['caption'])
-        print("TAG, as array", np.asarray(self.data['captions'], dtype=np.int64))
-        print("TAG, as arrray with slices", np.asarray(self.data["captions"], dtype=np.int64)[indStart: indEnd])
         self.captions = torch.LongTensor(np.asarray(self.data["captions"], dtype=np.int64)[indStart: indEnd])
         self.captionsPrgs = torch.LongTensor(np.asarray(self.data["captionProgs"], dtype=np.int64)[indStart: indEnd])
         self.name = name

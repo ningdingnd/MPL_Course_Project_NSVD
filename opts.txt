@@ -6,9 +6,9 @@ FlatOutSize: 512
 batch_size: 64
 betas: [0.9, 0.98]
 bidirectional: 1
-dataPathTest: E:/MPL/archive/NSVD_project/NSVD_project/data/dialogs_test.json
-dataPathTr: E:/MPL/archive/NSVD_project/NSVD_project/data/dialogs_train.json
-dataPathVal: E:/MPL/archive/NSVD_project/NSVD_project/data/dialogs_val.json
+dataPathTest: data/dialogs_test.json
+dataPathTr: data/dialogs_train.json
+dataPathVal: data/dialogs_val.json
 debug_every: 100
 display_every: 5
 dropout: 0.1

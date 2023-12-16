@@ -1,4 +1,3 @@
-
 import numpy as np
 from copy import deepcopy
 
@@ -107,31 +106,6 @@ class SymbolicExecutorClevr(object):
             return "shape"
         elif attribute in self.sizes:
             return "size"
-        
-    def filterAttribute(self, scene, attribute):
-        attributeType = self.getAttributeType(attribute)
-        filtered = []
-        if len(scene) == 0:
-            return filtered
-
-        for _obj in scene:
-            if _obj[attributeType] == attribute:
-                filtered.append(_obj)
-        return filtered
-
-    def excludeAttribute(self, scene, obj, attributeType):
-        filtered = []
-        if len(scene) == 0:
-            return filtered
-        for _obj in scene:
-            if _obj["id"] != obj["id"] and obj[attributeType] == _obj[attributeType]:
-                filtered.append(_obj)
-
-        # Update the visited objects list
-        if len(filtered) > 0:
-            for _obj in filtered:
-                self.updateVisited(_obj)
-        return filtered
 
     def execute(self, functionLabel, functionArgs):
         assert functionLabel in self.functions, "{} is not a valid function".format(
@@ -220,13 +194,37 @@ class SymbolicExecutorClevr(object):
         self.updateVisited(extremeLeftObj)
         del leftToRight
 
-    # TODO: Re-implement this function 
     def extremeFront(self, *attributes):
-        raise NotImplementedError
+        attributes = list(attributes)
+        attributeTypes = list(
+            map(lambda att: self.getAttributeType(att), attributes))
 
-    # TODO: Re-implement this function 
+        backToFront = deepcopy(self.scene)
+        backToFront.sort(key=lambda o: o["position"][1])
+        extremeFrontObj = backToFront[-1]
+        for attributeType, attribute in zip(attributeTypes, attributes):
+            assert extremeFrontObj[attributeType] == attribute
+            self.updateIdentifier(extremeFrontObj, attribute)
+
+        self.updateCurrentObj(extremeFrontObj)
+        self.updateVisited(extremeFrontObj)
+        del backToFront
+
     def extremeBehind(self, *attributes):
-        raise NotImplementedError
+        attributes = list(attributes)
+        attributeTypes = list(
+            map(lambda att: self.getAttributeType(att), attributes))
+
+        backToFront = deepcopy(self.scene)
+        backToFront.sort(key=lambda o: o["position"][1])
+        extremeBehindObj = backToFront[0]
+        for attributeType, attribute in zip(attributeTypes, attributes):
+            assert extremeBehindObj[attributeType] == attribute
+            self.updateIdentifier(extremeBehindObj, attribute)
+
+        self.updateCurrentObj(extremeBehindObj)
+        self.updateVisited(extremeBehindObj)
+        del backToFront
 
     def extremeCenter(self, *attributes):
         attributes = list(attributes)
@@ -268,9 +266,20 @@ class SymbolicExecutorClevr(object):
         self.updateVisited(_obj)
         del rightToLeft, frontToBack
 
-    # TODO: Re-implement this function 
     def countAttributeCaption(self, attribute):
-        raise NotImplementedError
+        attributeType = self.getAttributeType(attribute)
+        objs = []
+        for _obj in self.scene:
+            if _obj[attributeType] == attribute:
+                objs.append(deepcopy(_obj))
+        for _obj in objs:
+            self.updateIdentifier(_obj, attribute)
+        # update the current group
+        self.currentGrp = objs
+
+        # update the visited objects list
+        for _obj in objs:
+            self.updateVisited(_obj)
 
     def getAnchorAttribute(self, attribute_1, attribute_2, scene):
         # The anchor object is unique. If we filter the object list
@@ -332,13 +341,60 @@ class SymbolicExecutorClevr(object):
         self.updateVisited(_obj)
         del sceneCopy
 
-    # TODO: Re-implement this function 
     def uniqueObject(self, *attributes):
-        raise NotImplementedError
+        attributes = list(attributes)
+        attributeTypes = list(
+            map(lambda att: self.getAttributeType(att), attributes))
 
-    ########################################################
-    #                  Question programs                   #
-    ########################################################
+        for _obj in self.scene:
+            found = True
+            for attributeType, attribute in zip(attributeTypes, attributes):
+                if _obj[attributeType] != attribute:
+                    found = False
+                    break
+
+            if found:
+                break
+        for att in attributes:
+            self.updateIdentifier(_obj, att)
+
+        self.updateCurrentObj(_obj)
+        self.updateVisited(_obj)
+
+    ######################################## Question Programs ########################################
+    def filterOutObj(self, scene, obj):
+        sceneCopy = deepcopy(scene)
+        for i, _obj in enumerate(scene):
+            if obj["id"] == _obj["id"]:
+                break
+        del sceneCopy[i]
+        return sceneCopy
+
+    def filterAttribute(self, scene, attribute):
+        attributeType = self.getAttributeType(attribute)
+        filtered = []
+        if len(scene) == 0:
+            return filtered
+
+        for _obj in scene:
+            if _obj[attributeType] == attribute:
+                filtered.append(_obj)
+        return filtered
+
+    def excludeAttribute(self, scene, obj, attributeType):
+        filtered = []
+        if len(scene) == 0:
+            return filtered
+        for _obj in scene:
+            if _obj["id"] != obj["id"] and obj[attributeType] == _obj[attributeType]:
+                filtered.append(_obj)
+
+        # Update the visited objects list
+        if len(filtered) > 0:
+            for _obj in filtered:
+                self.updateVisited(_obj)
+        return filtered
+
     def filterLeft(self, scene, obj):
         filtered = []
         if len(scene) == 0:
@@ -351,19 +407,42 @@ class SymbolicExecutorClevr(object):
                 filtered.append(_obj)
         return filtered
 
-    # TODO: Re-implement this function 
     def filterRight(self, scene, obj):
-        raise NotImplementedError
+        filtered = []
+        for _obj in self.scene:
+            # if the x-coordinate of _obj is bigger than the x-coordinate of slef.currentObj,
+            # then _obj is located to the right of self.currentObj
+            if _obj["position"][0] > obj["position"][0] and _obj["id"] != obj["id"]:
+                filtered.append(_obj)
+        return filtered
 
-    # TODO: Re-implement this function 
     def filterFront(self, scene, obj):
-        raise NotImplementedError
+        filtered = []
+        if len(scene) == 0:
+            return filtered
 
-    # TODO: Re-implement this function 
+        for _obj in self.scene:
+            # if the y-coordinate of _obj is smaller than the y-coordinate of slef.currentObj,
+            # then _obj is located in front of self.currentObj
+            if _obj["position"][1] > obj["position"][1] and _obj["id"] != obj["id"]:
+                filtered.append(_obj)
+        return filtered
+
     def filterBehind(self, scene, obj):
-        raise NotImplementedError
+        # assert type(scene) == list, "Excpected type list got {} instead".format(type(scene))
+        filtered = []
+        if len(scene) == 0:
+            return filtered
+
+        for _obj in scene:
+            # if the y-coordinate of _obj is bigger than the y-coordinate of slef.currentObj,
+            # then _obj is located behind self.currentObj
+            if _obj["position"][1] < obj["position"][1] and _obj["id"] != obj["id"]:
+                filtered.append(_obj)
+        return filtered
 
     def filterPosition(self, scene, obj, pos):
+        # assert type(scene) == list, "Excpected type list got {} instead".format(type(scene))
         assert pos in ["left", "right", "front", "behind"]
         if pos == "left":
             filtered = self.filterLeft(scene, obj)
@@ -373,6 +452,7 @@ class SymbolicExecutorClevr(object):
             filtered = self.filterFront(scene, obj)
         elif pos == "behind":
             filtered = self.filterBehind(scene, obj)
+
         return filtered
 
     ###########################################################################
@@ -402,13 +482,60 @@ class SymbolicExecutorClevr(object):
     def countAllGroup(self):
         return len(self.currentGrp)
 
-    # TODO: Re-implement this function 
     def countAttribute(self, attribute, updateCurrentObj=True):
-        raise NotImplementedError
+        filtered = self.filterAttribute(self.scene, attribute)
+        if len(filtered) == 0:
+            return 0
+        # Update the visited objects list
+        for _obj in filtered:
+            self.updateVisited(_obj)
+        if len(filtered) == 1:
+            obj = filtered[0]
+            new = True
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj = _obj
+                    new = False
+                    break
+            self.updateIdentifier(obj, attribute)
+            self.updateVisited(obj)
+            if updateCurrentObj:
+                self.updateCurrentObj(obj)
+            else:
+                if new:
+                    self.objs.append(obj)
 
-    # TODO: Re-implement this function 
+        self.groups.append(filtered)
+        self.currentGrp = filtered
+        return len(filtered)
+
     def countAttributeGroup(self, attribute, updateCurrentObj=True):
-        raise NotImplementedError
+        filtered = self.filterAttribute(self.currentGrp, attribute)
+        if len(filtered) == 0:
+            return 0
+        # Update the visited objects list
+        for _obj in filtered:
+            self.updateVisited(_obj)
+        if len(filtered) == 1:
+            obj = filtered[0]
+            new = True
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj = _obj
+                    new = False
+                    break
+            self.updateIdentifier(obj, attribute)
+            self.updateVisited(obj)
+
+            if updateCurrentObj:
+                self.updateCurrentObj(obj)
+            else:
+                if new:
+                    self.objs.append(obj)
+
+        self.groups.append(filtered)
+        self.currentGrp = filtered
+        return len(filtered)
 
     def countObjRelImm(self, pos, updateCurrentObj=True):
         filtered = self.filterPosition(self.scene, self.currentObj, pos)
@@ -444,9 +571,40 @@ class SymbolicExecutorClevr(object):
             self.uniqueObjFlag = False
         return self.countObjRelImm(pos)
 
-    # TODO: Re-implement this function 
     def countObjRelEarly(self, pos, earlyObjAttribute, updateCurrentObj=True):
-        raise NotImplementedError
+        for objEarly in reversed(self.objs):
+            if objEarly["identifier"] is not None:
+                identifiers = objEarly["identifier"].split("-")
+                if earlyObjAttribute in identifiers:
+                    break
+            else:
+                continue
+        filtered = self.filterPosition(self.scene, objEarly, pos)
+        if len(filtered) == 0:
+            return 0
+        # Update the visited objects list
+        for _obj in filtered:
+            self.updateVisited(_obj)
+
+        if len(filtered) == 1:
+            obj = filtered[0]
+            new = True
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj = _obj
+                    new = False
+                    break
+            if updateCurrentObj:
+                self.updateCurrentObj(obj)
+            else:
+                if new:
+                    self.objs.append(obj)
+        else:
+            self.updateCurrentObj(objEarly)
+
+        self.currentGrp = filtered
+        self.groups.append(filtered)
+        return len(filtered)
 
     def countObjExcludeImm(self, attributeType, updateCurrentObj=True):
         filtered = self.excludeAttribute(
@@ -472,9 +630,37 @@ class SymbolicExecutorClevr(object):
         self.groups.append(filtered)
         return len(filtered)
 
-    # TODO: Re-implement this function 
     def countObjExcludeEarly(self, attributeType, earlyObjAttribute, updateCurrentObj=True):
-        raise NotImplementedError
+        for objEarly in reversed(self.objs):
+            if objEarly["identifier"] is not None:
+                identifiers = objEarly["identifier"].split("-")
+                if earlyObjAttribute in identifiers:
+                    break
+            else:
+                continue
+
+        filtered = self.excludeAttribute(self.scene, objEarly, attributeType)
+        if len(filtered) == 0:
+            return 0
+
+        if len(filtered) == 1:
+            obj = filtered[0]
+            new = True
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj = _obj
+                    new = False
+                    break
+            if updateCurrentObj:
+                self.updateCurrentObj(obj)
+            else:
+                if new:
+                    self.objs.append(obj)
+        else:
+            self.updateCurrentObj(objEarly)
+        self.currentGrp = filtered
+        self.groups.append(filtered)
+        return len(filtered)
 
     ###########################################################################
     #                           Existence questions                           #
@@ -490,18 +676,40 @@ class SymbolicExecutorClevr(object):
                 self.updateVisited(_obj)
         return "yes" if numOther > 0 else "no"
 
-    # TODO: Re-implement this function 
     def existAttribute(self, attribute):
-        raise NotADirectoryError
+        filtered = self.filterAttribute(self.scene, attribute)
+        numAttribute = len(filtered)
+        if numAttribute == 0:
+            return "no"
+
+        # Update the visited objects list
+        for _obj in filtered:
+            self.updateVisited(_obj)
+        if len(filtered) == 1:
+            obj = filtered[0]
+            new = True
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    self.updateIdentifier(_obj, attribute)
+                    new = False
+                    break
+            if new:
+                self.updateIdentifier(obj, attribute)
+                self.objs.append(obj)
+                # self.updateCurrentObj(obj)
+
+        self.currentGrp = filtered
+        self.groups.append(filtered)
+        return "yes"
 
     def existAttributeGroup(self, attribute):
         numAttributeGrp = self.countAttributeGroup(
             attribute, updateCurrentObj=False)
         return "yes" if numAttributeGrp > 0 else "no"
 
-    # TODO: Re-implement this function 
     def existObjRelImm(self, pos):
-        raise NotImplementedError
+        numObjs = self.countObjRelImm(pos, updateCurrentObj=False)
+        return "yes" if numObjs > 0 else "no"
 
     def existObjRelEarly(self, pos, earlyObjAttribute):
         numObjs = self.countObjRelEarly(
@@ -513,9 +721,22 @@ class SymbolicExecutorClevr(object):
             attributeType, updateCurrentObj=False)
         return "yes" if numObjs > 0 else "no"
 
-    # TODO: Re-implement this function 
     def existObjExcludeEarly(self, attributeType, earlyObjAttribute):
-        raise NotImplementedError
+        for objEarly in reversed(self.objs):
+            if objEarly["identifier"] is not None:
+                identifiers = objEarly["identifier"].split("-")
+                if earlyObjAttribute in identifiers:
+                    break
+            else:
+                continue
+
+        filtered = self.excludeAttribute(self.scene, objEarly, attributeType)
+        numObjs = len(filtered)
+        if numObjs == 0:
+            return "no"
+        self.currentGrp = filtered
+        self.groups.append(filtered)
+        return "yes"
 
     ###########################################################################
     #                             Seek questions                              #
@@ -526,9 +747,18 @@ class SymbolicExecutorClevr(object):
         self.updateIdentifier(self.currentObj, self.currentObj[attributeType])
         return self.currentObj[attributeType]
 
-    # TODO: Re-implement this function 
     def seekAttributeEarly(self, attributeType, earlyObjAttribute):
-        raise NotImplementedError
+        for objEarly in reversed(self.objs):
+            if objEarly["identifier"] is not None:
+                identifiers = objEarly["identifier"].split("-")
+                if earlyObjAttribute in identifiers:
+                    break
+            else:
+                continue
+        self.updateIdentifier(objEarly, objEarly[attributeType])
+        self.updateCurrentObj(objEarly)
+        self.updateVisited(objEarly)
+        return objEarly[attributeType]
 
     def seekAttributeRelImm(self, attributeType, pos):
         filtered = self.filterPosition(self.scene, self.currentObj, pos)
@@ -558,8 +788,39 @@ class SymbolicExecutorClevr(object):
             self.updateVisited(obj)
             return obj[attributeType]
 
-    # TODO: Re-implement this function 
     def seekAttributeRelEarly(self, attributeType, pos, earlyObjAttribute):
-        raise NotImplementedError
+        for objEarly in reversed(self.objs):
+            if objEarly["identifier"] is not None:
+                identifiers = objEarly["identifier"].split("-")
+                if earlyObjAttribute in identifiers:
+                    break
+            else:
+                continue
+
+        filtered = self.filterPosition(self.scene, objEarly, pos)
+        if len(filtered) == 0:
+            return "none"
+        else:
+            # Get the closest object to slef.obj
+            if pos == "left":
+                filtered.sort(key=lambda x: x["position"][0])
+                obj = filtered[-1]
+            elif pos == "right":
+                filtered.sort(key=lambda x: x["position"][0])
+                obj = filtered[0]
+            elif pos == "front":
+                filtered.sort(key=lambda x: x["position"][1])
+                obj = filtered[0]
+            elif pos == "behind":
+                filtered.sort(key=lambda x: x["position"][1])
+                obj = filtered[-1]
+            for _obj in self.objs:
+                if _obj["id"] == obj["id"]:
+                    obj["identifier"] = _obj["identifier"]
+                    break
+            self.updateIdentifier(obj, obj[attributeType])
+            self.updateCurrentObj(obj)
+            self.updateVisited(obj)
+            return obj[attributeType]
 
 
