@@ -18,7 +18,7 @@ The data (rendered scenes and dialgs) is located in the ```data\``` folder.
    cd preprocess_dialogs
    python preprocess # Set the flags as appropriate
    # NOTE:
-   # python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json train/vocab_output.json --output_h5_file /train --mode 'stack' --split 'train' --val_size 50 --input_vocab_json train/vocab_input.json 
+   # python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json train/vocab_output.json --output_h5_file train/output_h5.h5 --mode 'stack' --split 'train' --val_size 50 --input_vocab_json train/vocab_input.json 
 ```
 3. Adjust the experiments hyperparameters as appropriate in ```prog_generator/options_caption_parser.py``` and ```prog_generator/option_question_parser.py```
 
