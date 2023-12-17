@@ -549,8 +549,13 @@ def stack(allDialogs, vocab, percentage, split="train", num_rounds=10):
 
     return result
 
+def is_json_file_empty(file_path):
+    file_size = os.path.getsize(file_path)
+
+    return file_size == 0
 
 def main(args):
+    # make sure the input_vocab_json and output_vocab_json not null at same time
     assert not((args.input_vocab_json == "")
                and (args.output_vocab_json == ""))
 
@@ -559,7 +564,8 @@ def main(args):
         allDialogs = json.load(f)
 
     # Either create the vocab or load it from disk
-    if args.input_vocab_json == "":
+    # if args.input_vocab_json == "":
+    if is_json_file_empty(args.input_vocab_json):
         maxQ = 0
         maxP = 0
         text = []
