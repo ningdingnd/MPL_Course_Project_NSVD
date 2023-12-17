@@ -701,7 +701,7 @@ def main(args):
         with h5py.File(args.output_h5_file.format(split, args.num_rounds, args.percentage), 'w') as f:
             for dataName in result[split]:
                 try:
-                    data = np.asarray(result[split][dataName], dtype=np.int32)
+                    data = np.asarray(result[split][dataName], dtype=np.int16)
                     f.create_dataset(dataName, data=data)
                 except ValueError as e:
                     print("[INFO] Error raise by {} ...".format(dataName))

@@ -2,3 +2,6 @@
 
 /data/
 /.vscode/
+/train/
+/test/
+/val/
