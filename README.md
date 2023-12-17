@@ -17,6 +17,7 @@ The data (rendered scenes and dialgs) is located in the ```data\``` folder.
 ```shell
    cd preprocess_dialogs
    python preprocess # Set the flags as appropriate
+   # Note: first create train, val, test folder directly under project, then add three following files ("output_h5.h5", "vocab_input.json", "vocab_output.json") in each of mentioned folders 
    # for gernerating training and validation dataset for stack question program
    python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json train/vocab_output.json --output_h5_file train/output_h5.h5 --mode 'stack' --split 'train' --val_size 50 --input_vocab_json train/vocab_input.json 
    python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json val/vocab_output.json --output_h5_file val/output_h5.h5 --mode 'stack' --split 'val' --val_size 50 --input_vocab_json val/vocab_input.json 
