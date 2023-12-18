@@ -337,7 +337,8 @@ def concat(allDialogs, vocab, percentage, split="train", num_rounds=10):
         split: {
             "captions": captions,
             "captionProgs": captionProgs,
-
+            
+            # Note: if generate dataset for caption program, comment out things below
             "questions": questions,
             "questionProgs": questionProgs,
             "questionImgIdx": questionImgIdx,
