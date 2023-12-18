@@ -2,6 +2,10 @@
 
 /data/
 /.vscode/
-/train/
-/test/
-/val/
+/train_stack/
+/train_concat/
+/test_stack/
+/test_concat/
+/val_stack/
+/val_concat/
+/caption_result/

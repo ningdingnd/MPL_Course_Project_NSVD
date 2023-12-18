@@ -17,12 +17,22 @@ The data (rendered scenes and dialgs) is located in the ```data\``` folder.
 ```shell
    cd preprocess_dialogs
    python preprocess # Set the flags as appropriate
-   # Note: first create train, val, test folder directly under project, then add three following files ("output_h5.h5", "vocab_input.json", "vocab_output.json") in each of mentioned folders 
+   # Note: first create train, val, test folder for stack and concat program directly under project, then add three following files ("output_h5.h5", "vocab_input.json", "vocab_output.json") in each of mentioned folders 
    # for gernerating training and validation dataset for stack question program
-   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json train/vocab_output.json --output_h5_file train/output_h5.h5 --mode 'stack' --split 'train' --val_size 50 --input_vocab_json train/vocab_input.json 
-   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json val/vocab_output.json --output_h5_file val/output_h5.h5 --mode 'stack' --split 'val' --val_size 50 --input_vocab_json val/vocab_input.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json train_stack/vocab_output.json --output_h5_file train_stack/output_h5.h5 --mode 'stack' --split 'train' --val_size 50 --input_vocab_json train_stack/vocab_input.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json val_stack/vocab_output.json --output_h5_file val_stack/output_h5.h5 --mode 'stack' --split 'val' --val_size 50 --input_vocab_json val_stack/vocab_input.json 
+
    # for gernerating test dataset for stack question program
-   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json test/vocab_output.json --output_h5_file test/output_h5.h5 --mode 'stack' --split 'test' --val_size 50 --input_vocab_json test/vocab_input.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json test_stack/vocab_output.json --output_h5_file test_stack/output_h5.h5 --mode 'stack' --split 'test' --val_size 50 --input_vocab_json test_stack/vocab_input.json 
+
+   # for gernerating training and validation dataset for concat question program
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json train_concat/vocab_output.json --output_h5_file train_concat/output_h5.h5 --mode 'concat' --split 'train' --val_size 50 --input_vocab_json train_concat/vocab_input.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json val_concat/vocab_output.json --output_h5_file val_concat/output_h5.h5 --mode 'concat' --split 'val' --val_size 50 --input_vocab_json val_concat/vocab_input.json 
+
+   # for gernerating test dataset for concat question program
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json test_concat/vocab_output.json --output_h5_file test_concat/output_h5.h5 --mode 'concat' --split 'test' --val_size 50 --input_vocab_json test_concat/vocab_input.json 
+
+
 
 ```
 3. Adjust the experiments hyperparameters as appropriate in ```prog_generator/options_caption_parser.py``` and ```prog_generator/option_question_parser.py```
