@@ -32,13 +32,13 @@ The data (rendered scenes and dialgs) is located in the ```data\``` folder.
    # for gernerating test dataset for concat question program
    python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json test_concat/vocab_output.json --output_h5_file test_concat/output_h5.h5 --mode 'concat' --split 'test' --val_size 50 --input_vocab_json test_concat/vocab_input.json 
 
-   # for gernerating training and validation dataset for caption program
+   # for gernerating dataset for caption program
+   # train caption dataset
    python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json caption/vocab_output_train.json --output_h5_file caption/caption_train.h5 --mode 'concat' --split 'train' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
-   # not run yet
+   # val caption dataset
    python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json caption/vocab_output_val.json --output_h5_file caption/caption_val.h5 --mode 'concat' --split 'val' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
 
-   # for gernerating test dataset for caption program
-   # not run yet
+   # test caption dataset
    python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json caption/vocab_output_test.json --output_h5_file caption/caption_test.h5 --mode 'concat' --split 'test' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
 
 
