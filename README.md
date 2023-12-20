@@ -34,12 +34,15 @@ The data (rendered scenes and dialgs) is located in the ```data\``` folder.
 
    # for gernerating dataset for caption program
    # train caption dataset
-   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json caption/vocab_output_train.json --output_h5_file caption/caption_train.h5 --mode 'concat' --split 'train' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json caption/vocab_output_caption.json --output_h5_file caption/caption_train.h5 --mode 'concat' --split 'train' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
+ 
    # val caption dataset
-   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json caption/vocab_output_val.json --output_h5_file caption/caption_val.h5 --mode 'concat' --split 'val' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_train.json --output_vocab_json caption/vocab_output_caption.json --output_h5_file caption/caption_val.h5 --mode 'concat' --split 'val' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
+ 
 
    # test caption dataset
-   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json caption/vocab_output_test.json --output_h5_file caption/caption_test.h5 --mode 'concat' --split 'test' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
+   python preprocess_dialogs/preprocess.py --input_dialogs_json data/dialogs_test.json --output_vocab_json caption/vocab_output_caption.json --output_h5_file caption/caption_test.h5 --mode 'concat' --split 'test' --val_size 50 --input_vocab_json caption/vocab_input_caption.json 
+ 
 
 
 ```

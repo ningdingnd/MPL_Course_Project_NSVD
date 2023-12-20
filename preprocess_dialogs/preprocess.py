@@ -637,7 +637,9 @@ def main(args):
     if args.output_vocab_json != "":
         if not os.path.isdir(os.path.dirname(args.output_vocab_json)):
             os.makedirs(os.path.dirname(args.output_vocab_json))
-        with open(args.output_vocab_json, 'w') as f:
+        # Note: only need one vocab output
+        # with open(args.output_vocab_json, 'w') as f:   
+        with open(args.output_vocab_json, 'a') as f:
             json.dump(vocab, f)
         print("[INFO] Vocab saved to {} ...".format(args.output_vocab_json))
 
