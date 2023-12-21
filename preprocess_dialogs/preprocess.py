@@ -641,6 +641,7 @@ def main(args):
         # with open(args.output_vocab_json, 'w') as f:   
         with open(args.output_vocab_json, 'a') as f:
             json.dump(vocab, f)
+            f.write('\n')
         print("[INFO] Vocab saved to {} ...".format(args.output_vocab_json))
 
     # Encode all questions and programs

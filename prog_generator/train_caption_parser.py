@@ -14,7 +14,6 @@ class Execution:
         self.opts = opts
 
         self.loss_fn = torch.nn.NLLLoss().cuda()
-
         print("[INFO] Loading dataset ...")
 
         self.dataset_tr = ClevrDialogCaptionDataset(
