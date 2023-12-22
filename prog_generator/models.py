@@ -230,7 +230,13 @@ class CaptionEncoder(nn.Module):
         cap = self.attFlatCap(cap, capMask)
         encOut = self.fc(cap)
         return encOut, capO
-
+    
+    # Masking
+    def make_mask(self, feature):
+        return (torch.sum(
+            torch.abs(feature),
+            dim=-1
+        ) == 0).unsqueeze(1).unsqueeze(2)
 class QuestEncoder_1(nn.Module):
     """
         Concat encoder
@@ -445,8 +451,8 @@ class SeqToSeqC(nn.Module):
         self.encoder = encoder
         self.decoder = decoder
 
-    def forward(self, cap, imgFeat, prog):
-        encOut, capO = self.encoder(cap, imgFeat)
+    def forward(self, cap, prog):
+        encOut, capO = self.encoder(cap)
         predSoftmax, progHC = self.decoder(prog, encOut, capO)
         return predSoftmax, progHC
    

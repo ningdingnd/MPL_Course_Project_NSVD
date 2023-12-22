@@ -5,8 +5,8 @@
 
 import argparse
 import os
-import utils
 import torch
+#import utils_m
 
 
 class Options():
@@ -17,14 +17,17 @@ class Options():
     def initialize(self):
         self.parser.add_argument(
             '--mode',
-            required=True,
+            default="train",
+            # required=True,
             type=str,
             choices=['train', 'test'],
             help='The mode of the experiment')
 
         self.parser.add_argument(
             '--run_dir',
-            required=True,
+            default="caption",
+
+            # required=True,
             type=str,
             help='The experiment directory')
 
@@ -36,7 +39,9 @@ class Options():
 
         self.parser.add_argument(
             '--res_path',
-            required=True,
+            default="caption",
+
+            # required=True,
             type=str,
             help='Path where to log the predicted caption programs')
 
@@ -54,31 +59,38 @@ class Options():
 
         self.parser.add_argument(
             '--dataPathTr',
-            required=True,
+            default="caption/caption_train.h5",
+            # required=True,
             type=str,
             help='Path to the h5 file of the Clevr-Dialog preprocessed training data')
 
         self.parser.add_argument(
             '--dataPathVal',
-            required=True,
+            default="caption/caption_val.h5",
+
+            # required=True,
             type=str,
             help='Path to the h5 file of the Clevr-Dialog preprocessed validation data')
 
         self.parser.add_argument(
             '--dataPathTest',
-            required=True,
+            # required=True,
+            default="caption/caption_test.h5",
+
             type=str,
             help='Path to the h5 file of the Clevr-Dialog preprocessed test data')
 
         self.parser.add_argument(
             '--vocabPath',
-            required=True,
+            default="caption/vocab_output_caption.json",
+
+            # required=True,
             type=str,
             help='Path to the generated vocabulary')
 
         self.parser.add_argument(
             '--batch_size',
-            default=64,
+            default=1,
             type=int,
             help='Batch size')
 

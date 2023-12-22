@@ -6,7 +6,7 @@ from executor.clevr_statics import COLORS, MATERIALS, SHAPES, SIZES
 from executor.clevr_statics import ANSWER_CANDIDATES as ANSWER_CANDIDATES_CLEVR
 from executor.clevr_statics import ATTRIBUTES_ALL as ATTRIBUTES_ALL_CLEVR
 
-from utils import load_clevr_scenes
+from utils_m import load_clevr_scenes
 
 
 class SymbolicExecutorClevr(object):
